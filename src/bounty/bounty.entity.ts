@@ -34,12 +34,6 @@ export class Bounty {
   @Column({ name: 'assignee_id', nullable: true })
   assigneeId: string;
 
-  @Column({ name: 'github_issue_url', nullable: true })
-  githubIssueUrl: string;
-
-  @Column({ name: 'due_date', nullable: true })
-  dueDate: Date;
-
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
