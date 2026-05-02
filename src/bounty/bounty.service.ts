@@ -14,17 +14,12 @@ export class BountyService {
   ) {}
 
   async create(createBountyDto: CreateBountyDto): Promise<Bounty> {
-    const bounty = this.bountyRepository.create({
-      ...createBountyDto,
-      dueDate: createBountyDto.dueDate ? new Date(createBountyDto.dueDate) : null,
-    });
+    const bounty = this.bountyRepository.create(createBountyDto);
     return this.bountyRepository.save(bounty);
   }
 
   async findAll(): Promise<Bounty[]> {
-    return this.bountyRepository.find({
-      order: { createdAt: 'DESC' }
-    });
+    return this.bountyRepository.find();
   }
 
   async findOne(id: string): Promise<Bounty> {
@@ -37,18 +32,8 @@ export class BountyService {
 
   async update(id: string, updateBountyDto: UpdateBountyDto): Promise<Bounty> {
     const bounty = await this.findOne(id);
-    
-    if (bounty.status === BountyStatus.COMPLETED || bounty.status === BountyStatus.CANCELLED) {
-      throw new BadRequestException('Cannot update completed or cancelled bounty');
-    }
-
-    const updateData = {
-      ...updateBountyDto,
-      dueDate: updateBountyDto.dueDate ? new Date(updateBountyDto.dueDate) : bounty.dueDate,
-    };
-
-    await this.bountyRepository.update(id, updateData);
-    return this.findOne(id);
+    Object.assign(bounty, updateBountyDto);
+    return this.bountyRepository.save(bounty);
   }
 
   async claim(id: string, claimBountyDto: ClaimBountyDto): Promise<Bounty> {
@@ -58,26 +43,23 @@ export class BountyService {
       throw new BadRequestException('Bounty is not available for claiming');
     }
 
-    await this.bountyRepository.update(id, {
-      assigneeId: claimBountyDto.assigneeId,
-      status: BountyStatus.IN_PROGRESS,
-    });
+    bounty.assigneeId = claimBountyDto.assigneeId;
+    bounty.status = BountyStatus.IN_PROGRESS;
     
-    return this.findOne(id);
+    return this.bountyRepository.save(bounty);
   }
 
   async cancel(id: string): Promise<Bounty> {
     const bounty = await this.findOne(id);
     
     if (bounty.status === BountyStatus.COMPLETED) {
-      throw new BadRequestException('Cannot cancel completed bounty');
+      throw new BadRequestException('Cannot cancel a completed bounty');
     }
 
-    await this.bountyRepository.update(id, {
-      status: BountyStatus.CANCELLED,
-    });
+    bounty.status = BountyStatus.CANCELLED;
+    bounty.assigneeId = null;
     
-    return this.findOne(id);
+    return this.bountyRepository.save(bounty);
   }
 
   async complete(id: string): Promise<Bounty> {
@@ -87,10 +69,8 @@ export class BountyService {
       throw new BadRequestException('Bounty must be in progress to complete');
     }
 
-    await this.bountyRepository.update(id, {
-      status: BountyStatus.COMPLETED,
-    });
+    bounty.status = BountyStatus.COMPLETED;
     
-    return this.findOne(id);
+    return this.bountyRepository.save(bounty);
   }
 }
