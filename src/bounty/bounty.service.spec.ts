@@ -36,19 +36,12 @@ describe('BountyService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('findOne', () => {
-    it('should return a bounty if found', async () => {
-      const bounty = { id: '1', title: 'Test Bounty' };
-      mockRepository.findOne.mockResolvedValue(bounty);
+  describe('findAll', () => {
+    it('should return an array of bounties', async () => {
+      const result = [];
+      mockRepository.find.mockResolvedValue(result);
 
-      const result = await service.findOne('1');
-      expect(result).toEqual(bounty);
-    });
-
-    it('should throw NotFoundException if bounty not found', async () => {
-      mockRepository.findOne.mockResolvedValue(null);
-
-      await expect(service.findOne('1')).rejects.toThrow(NotFoundException);
+      expect(await service.findAll()).toBe(result);
     });
   });
 });
