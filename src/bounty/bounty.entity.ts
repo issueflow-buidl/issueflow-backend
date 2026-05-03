@@ -37,8 +37,8 @@ export class Bounty {
   @Column({ name: 'creator_id' })
   creatorId: string;
 
-  @Column({ name: 'claimant_id', nullable: true })
-  claimantId?: string;
+  @Column({ name: 'assignee_id', nullable: true })
+  assigneeId: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -46,9 +46,12 @@ export class Bounty {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  @Column({ name: 'claimed_at', nullable: true })
-  claimedAt?: Date;
+  @Column({ name: 'due_date', nullable: true })
+  dueDate: Date;
 
-  @Column({ name: 'completed_at', nullable: true })
-  completedAt?: Date;
+  @Column('text', { nullable: true })
+  requirements: string;
+
+  @Column('simple-array', { nullable: true })
+  tags: string[];
 }
