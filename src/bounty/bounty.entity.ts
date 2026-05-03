@@ -25,7 +25,7 @@ export class Bounty {
   description: string;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  amount: number;
+  reward: number;
 
   @Column({
     type: 'enum',
@@ -39,6 +39,12 @@ export class Bounty {
 
   @Column({ name: 'claimed_by', nullable: true })
   claimedBy?: string;
+
+  @Column({ name: 'claimed_at', type: 'timestamp', nullable: true })
+  claimedAt?: Date;
+
+  @Column({ name: 'completed_at', type: 'timestamp', nullable: true })
+  completedAt?: Date;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
