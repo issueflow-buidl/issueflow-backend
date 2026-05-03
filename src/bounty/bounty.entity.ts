@@ -34,21 +34,15 @@ export class Bounty {
   })
   status: BountyStatus;
 
-  @Column({ name: 'created_by' })
-  createdBy: string;
+  @Column({ name: 'creator_id' })
+  creatorId: string;
 
-  @Column({ name: 'claimed_by', nullable: true })
-  claimedBy: string;
+  @Column({ name: 'assignee_id', nullable: true })
+  assigneeId?: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
-
-  @Column({ name: 'claimed_at', nullable: true })
-  claimedAt: Date;
-
-  @Column({ name: 'completed_at', nullable: true })
-  completedAt: Date;
 }
