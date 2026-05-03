@@ -1,10 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export enum BountyStatus {
   OPEN = 'open',
   IN_PROGRESS = 'in_progress',
   COMPLETED = 'completed',
-  CANCELLED = 'cancelled'
+  CANCELLED = 'cancelled',
 }
 
 @Entity('bounties')
@@ -24,19 +30,16 @@ export class Bounty {
   @Column({
     type: 'enum',
     enum: BountyStatus,
-    default: BountyStatus.OPEN
+    default: BountyStatus.OPEN,
   })
   status: BountyStatus;
 
-  @Column({ name: 'creator_id' })
-  creatorId: string;
+  @Column({ nullable: true })
+  claimedBy?: string;
 
-  @Column({ name: 'assignee_id', nullable: true })
-  assigneeId: string;
-
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }
