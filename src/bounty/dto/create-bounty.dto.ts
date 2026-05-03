@@ -1,19 +1,19 @@
-import { IsString, IsNumber, IsNotEmpty, IsPositive } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateBountyDto {
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   title: string;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   description: string;
 
-  @IsNumber()
-  @IsPositive()
-  amount: number;
-
-  @IsString()
   @IsNotEmpty()
-  createdBy: string;
+  @IsNumber()
+  reward: number;
+
+  @IsOptional()
+  @IsString()
+  createdBy?: string;
 }
