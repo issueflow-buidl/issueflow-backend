@@ -1,22 +1,4 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateBountyDto } from './create-bounty.dto';
-import { IsOptional, IsString, IsNumber, IsPositive, IsDateString } from 'class-validator';
 
-export class UpdateBountyDto extends PartialType(CreateBountyDto) {
-  @IsOptional()
-  @IsString()
-  title?: string;
-
-  @IsOptional()
-  @IsString()
-  description?: string;
-
-  @IsOptional()
-  @IsNumber()
-  @IsPositive()
-  reward?: number;
-
-  @IsOptional()
-  @IsDateString()
-  dueDate?: Date;
-}
+export class UpdateBountyDto extends PartialType(CreateBountyDto) {}
