@@ -10,16 +10,12 @@ export class BountyService {
 
   create(createBountyDto: CreateBountyDto): Bounty {
     const bounty: Bounty = {
-      id: this.generateId(),
-      title: createBountyDto.title,
-      description: createBountyDto.description,
-      amount: createBountyDto.amount,
+      id: Math.random().toString(36).substr(2, 9),
+      ...createBountyDto,
       status: BountyStatus.OPEN,
-      createdBy: createBountyDto.createdBy,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-
     this.bounties.push(bounty);
     return bounty;
   }
@@ -38,56 +34,41 @@ export class BountyService {
 
   update(id: string, updateBountyDto: UpdateBountyDto): Bounty {
     const bounty = this.findOne(id);
-    
-    if (bounty.status !== BountyStatus.OPEN) {
-      throw new BadRequestException('Can only update open bounties');
-    }
-
-    Object.assign(bounty, updateBountyDto, { updatedAt: new Date() });
+    Object.assign(bounty, updateBountyDto);
+    bounty.updatedAt = new Date();
     return bounty;
   }
 
   claim(id: string, claimBountyDto: ClaimBountyDto): Bounty {
     const bounty = this.findOne(id);
-    
     if (bounty.status !== BountyStatus.OPEN) {
       throw new BadRequestException('Bounty is not available for claiming');
     }
-
     bounty.status = BountyStatus.IN_PROGRESS;
     bounty.claimedBy = claimBountyDto.claimedBy;
+    bounty.claimedAt = new Date();
     bounty.updatedAt = new Date();
-    
     return bounty;
   }
 
   cancel(id: string): Bounty {
     const bounty = this.findOne(id);
-    
     if (bounty.status === BountyStatus.COMPLETED) {
-      throw new BadRequestException('Cannot cancel completed bounty');
+      throw new BadRequestException('Cannot cancel a completed bounty');
     }
-
     bounty.status = BountyStatus.CANCELLED;
     bounty.updatedAt = new Date();
-    
     return bounty;
   }
 
   complete(id: string): Bounty {
     const bounty = this.findOne(id);
-    
     if (bounty.status !== BountyStatus.IN_PROGRESS) {
-      throw new BadRequestException('Can only complete bounties in progress');
+      throw new BadRequestException('Bounty must be in progress to complete');
     }
-
     bounty.status = BountyStatus.COMPLETED;
+    bounty.completedAt = new Date();
     bounty.updatedAt = new Date();
-    
     return bounty;
-  }
-
-  private generateId(): string {
-    return Math.random().toString(36).substring(2) + Date.now().toString(36);
   }
 }
