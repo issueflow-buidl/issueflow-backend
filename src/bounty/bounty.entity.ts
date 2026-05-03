@@ -34,21 +34,27 @@ export class Bounty {
   })
   status: BountyStatus;
 
-  @Column({ nullable: true })
+  @Column({ name: 'created_by' })
   createdBy: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'claimed_by', nullable: true })
   claimedBy?: string;
 
-  @Column({ type: 'timestamp', nullable: true })
-  claimedAt?: Date;
+  @Column({ name: 'completed_by', nullable: true })
+  completedBy?: string;
 
-  @Column({ type: 'timestamp', nullable: true })
-  deadline?: Date;
-
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @Column({ name: 'claimed_at', nullable: true })
+  claimedAt?: Date;
+
+  @Column({ name: 'completed_at', nullable: true })
+  completedAt?: Date;
+
+  @Column({ name: 'cancelled_at', nullable: true })
+  cancelledAt?: Date;
 }
