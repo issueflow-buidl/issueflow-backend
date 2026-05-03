@@ -10,6 +10,7 @@ describe('BountyService', () => {
     find: jest.fn(),
     findOne: jest.fn(),
     update: jest.fn(),
+    delete: jest.fn(),
   };
 
   beforeEach(async () => {
