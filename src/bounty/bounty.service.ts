@@ -16,7 +16,6 @@ export class BountyService {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    
     this.bounties.push(bounty);
     return bounty;
   }
@@ -38,18 +37,18 @@ export class BountyService {
     if (bountyIndex === -1) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
-
+    
     const bounty = this.bounties[bountyIndex];
     if (bounty.status !== BountyStatus.OPEN) {
       throw new BadRequestException('Can only update open bounties');
     }
-
+    
     this.bounties[bountyIndex] = {
       ...bounty,
       ...updateBountyDto,
       updatedAt: new Date(),
     };
-
+    
     return this.bounties[bountyIndex];
   }
 
@@ -58,20 +57,19 @@ export class BountyService {
     if (bountyIndex === -1) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
-
+    
     const bounty = this.bounties[bountyIndex];
     if (bounty.status !== BountyStatus.OPEN) {
       throw new BadRequestException('Bounty is not available for claiming');
     }
-
+    
     this.bounties[bountyIndex] = {
       ...bounty,
       status: BountyStatus.IN_PROGRESS,
-      claimedBy: claimBountyDto.claimedBy,
-      claimedAt: new Date(),
+      assigneeId: claimBountyDto.assigneeId,
       updatedAt: new Date(),
     };
-
+    
     return this.bounties[bountyIndex];
   }
 
@@ -80,19 +78,18 @@ export class BountyService {
     if (bountyIndex === -1) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
-
+    
     const bounty = this.bounties[bountyIndex];
-    if (bounty.status === BountyStatus.COMPLETED || bounty.status === BountyStatus.CANCELLED) {
-      throw new BadRequestException('Cannot cancel completed or already cancelled bounty');
+    if (bounty.status === BountyStatus.COMPLETED) {
+      throw new BadRequestException('Cannot cancel completed bounty');
     }
-
+    
     this.bounties[bountyIndex] = {
       ...bounty,
       status: BountyStatus.CANCELLED,
-      cancelledAt: new Date(),
       updatedAt: new Date(),
     };
-
+    
     return this.bounties[bountyIndex];
   }
 
@@ -101,20 +98,18 @@ export class BountyService {
     if (bountyIndex === -1) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
-
+    
     const bounty = this.bounties[bountyIndex];
     if (bounty.status !== BountyStatus.IN_PROGRESS) {
       throw new BadRequestException('Can only complete bounties that are in progress');
     }
-
+    
     this.bounties[bountyIndex] = {
       ...bounty,
       status: BountyStatus.COMPLETED,
-      completedBy: bounty.claimedBy,
-      completedAt: new Date(),
       updatedAt: new Date(),
     };
-
+    
     return this.bounties[bountyIndex];
   }
 }
