@@ -1,7 +1,7 @@
-import { IsString, MinLength } from 'class-validator';
+import { IsString, IsNotEmpty } from 'class-validator';
 
 export class ClaimBountyDto {
   @IsString()
-  @MinLength(1)
-  claimedBy: string;
+  @IsNotEmpty()
+  claimerId: string;
 }
