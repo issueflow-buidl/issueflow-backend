@@ -48,7 +48,7 @@ export class BountyService {
       return undefined;
     }
     bounty.status = BountyStatus.IN_PROGRESS;
-    bounty.claimedBy = claimBountyDto.claimedBy;
+    bounty.claimedBy = claimBountyDto.userId;
     bounty.updatedAt = new Date();
     return bounty;
   }
