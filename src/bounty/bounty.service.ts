@@ -13,11 +13,9 @@ export class BountyService {
       id: Math.random().toString(36).substr(2, 9),
       ...createBountyDto,
       status: BountyStatus.OPEN,
-      assigneeId: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    
     this.bounties.push(bounty);
     return bounty;
   }
@@ -27,7 +25,7 @@ export class BountyService {
   }
 
   findOne(id: string): Bounty {
-    const bounty = this.bounties.find(b => b.id === id);
+    const bounty = this.bounties.find((b) => b.id === id);
     if (!bounty) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
@@ -35,7 +33,7 @@ export class BountyService {
   }
 
   update(id: string, updateBountyDto: UpdateBountyDto): Bounty {
-    const bountyIndex = this.bounties.findIndex(b => b.id === id);
+    const bountyIndex = this.bounties.findIndex((b) => b.id === id);
     if (bountyIndex === -1) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
@@ -50,12 +48,11 @@ export class BountyService {
       ...updateBountyDto,
       updatedAt: new Date(),
     };
-
     return this.bounties[bountyIndex];
   }
 
   claim(id: string, claimBountyDto: ClaimBountyDto): Bounty {
-    const bountyIndex = this.bounties.findIndex(b => b.id === id);
+    const bountyIndex = this.bounties.findIndex((b) => b.id === id);
     if (bountyIndex === -1) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
@@ -68,22 +65,21 @@ export class BountyService {
     this.bounties[bountyIndex] = {
       ...bounty,
       status: BountyStatus.IN_PROGRESS,
-      assigneeId: claimBountyDto.assigneeId,
+      claimedBy: claimBountyDto.claimedBy,
       updatedAt: new Date(),
     };
-
     return this.bounties[bountyIndex];
   }
 
   cancel(id: string): Bounty {
-    const bountyIndex = this.bounties.findIndex(b => b.id === id);
+    const bountyIndex = this.bounties.findIndex((b) => b.id === id);
     if (bountyIndex === -1) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
 
     const bounty = this.bounties[bountyIndex];
-    if (bounty.status === BountyStatus.COMPLETED || bounty.status === BountyStatus.CANCELLED) {
-      throw new BadRequestException('Cannot cancel completed or already cancelled bounties');
+    if (bounty.status === BountyStatus.COMPLETED) {
+      throw new BadRequestException('Completed bounties cannot be cancelled');
     }
 
     this.bounties[bountyIndex] = {
@@ -91,12 +87,11 @@ export class BountyService {
       status: BountyStatus.CANCELLED,
       updatedAt: new Date(),
     };
-
     return this.bounties[bountyIndex];
   }
 
   complete(id: string): Bounty {
-    const bountyIndex = this.bounties.findIndex(b => b.id === id);
+    const bountyIndex = this.bounties.findIndex((b) => b.id === id);
     if (bountyIndex === -1) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
@@ -111,7 +106,6 @@ export class BountyService {
       status: BountyStatus.COMPLETED,
       updatedAt: new Date(),
     };
-
     return this.bounties[bountyIndex];
   }
 }
