@@ -33,23 +33,15 @@ export class BountyService {
   }
 
   update(id: string, updateBountyDto: UpdateBountyDto): Bounty {
-    const bountyIndex = this.bounties.findIndex((b) => b.id === id);
-    if (bountyIndex === -1) {
-      throw new NotFoundException(`Bounty with ID ${id} not found`);
-    }
-    this.bounties[bountyIndex] = {
-      ...this.bounties[bountyIndex],
-      ...updateBountyDto,
-      updatedAt: new Date(),
-    };
-    return this.bounties[bountyIndex];
+    const bounty = this.findOne(id);
+    Object.assign(bounty, updateBountyDto, { updatedAt: new Date() });
+    return bounty;
   }
 
   claim(id: string, claimBountyDto: ClaimBountyDto): Bounty {
     const bounty = this.findOne(id);
     bounty.status = BountyStatus.IN_PROGRESS;
     bounty.claimedBy = claimBountyDto.claimedBy;
-    bounty.claimedAt = new Date();
     bounty.updatedAt = new Date();
     return bounty;
   }
@@ -64,7 +56,6 @@ export class BountyService {
   complete(id: string): Bounty {
     const bounty = this.findOne(id);
     bounty.status = BountyStatus.COMPLETED;
-    bounty.completedAt = new Date();
     bounty.updatedAt = new Date();
     return bounty;
   }
