@@ -13,7 +13,6 @@ export class BountyService {
       id: Math.random().toString(36).substr(2, 9),
       ...createBountyDto,
       status: BountyStatus.OPEN,
-      claimantId: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -42,11 +41,8 @@ export class BountyService {
 
   claim(id: string, claimBountyDto: ClaimBountyDto): Bounty {
     const bounty = this.findOne(id);
-    if (bounty.status !== BountyStatus.OPEN) {
-      throw new Error('Bounty is not available for claiming');
-    }
-    bounty.claimantId = claimBountyDto.claimantId;
     bounty.status = BountyStatus.IN_PROGRESS;
+    bounty.claimedBy = claimBountyDto.userId;
     bounty.updatedAt = new Date();
     return bounty;
   }
