@@ -1,117 +1,78 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Bounty, BountyStatus } from './bounty.entity';
 import { CreateBountyDto } from './dto/create-bounty.dto';
 import { UpdateBountyDto } from './dto/update-bounty.dto';
 import { ClaimBountyDto } from './dto/claim-bounty.dto';
-import { Bounty, BountyStatus } from './bounty.entity';
 
 @Injectable()
 export class BountyService {
-  private bounties: Bounty[] = [];
+  constructor(
+    @InjectRepository(Bounty)
+    private bountyRepository: Repository<Bounty>,
+  ) {}
 
-  create(createBountyDto: CreateBountyDto): Bounty {
-    const bounty: Bounty = {
-      id: Math.random().toString(36).substring(7),
-      ...createBountyDto,
-      status: BountyStatus.OPEN,
-      claimedBy: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    
-    this.bounties.push(bounty);
-    return bounty;
+  async create(createBountyDto: CreateBountyDto): Promise<Bounty> {
+    const bounty = this.bountyRepository.create(createBountyDto);
+    return this.bountyRepository.save(bounty);
   }
 
-  findAll(): Bounty[] {
-    return this.bounties;
+  async findAll(): Promise<Bounty[]> {
+    return this.bountyRepository.find();
   }
 
-  findOne(id: string): Bounty {
-    const bounty = this.bounties.find(b => b.id === id);
+  async findOne(id: string): Promise<Bounty> {
+    const bounty = await this.bountyRepository.findOne({ where: { id } });
     if (!bounty) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
     return bounty;
   }
 
-  update(id: string, updateBountyDto: UpdateBountyDto): Bounty {
-    const bountyIndex = this.bounties.findIndex(b => b.id === id);
-    if (bountyIndex === -1) {
-      throw new NotFoundException(`Bounty with ID ${id} not found`);
-    }
-
-    const bounty = this.bounties[bountyIndex];
+  async update(id: string, updateBountyDto: UpdateBountyDto): Promise<Bounty> {
+    const bounty = await this.findOne(id);
+    
     if (bounty.status !== BountyStatus.OPEN) {
       throw new BadRequestException('Can only update open bounties');
     }
 
-    this.bounties[bountyIndex] = {
-      ...bounty,
-      ...updateBountyDto,
-      updatedAt: new Date(),
-    };
-
-    return this.bounties[bountyIndex];
+    Object.assign(bounty, updateBountyDto);
+    return this.bountyRepository.save(bounty);
   }
 
-  claim(id: string, claimBountyDto: ClaimBountyDto): Bounty {
-    const bountyIndex = this.bounties.findIndex(b => b.id === id);
-    if (bountyIndex === -1) {
-      throw new NotFoundException(`Bounty with ID ${id} not found`);
-    }
-
-    const bounty = this.bounties[bountyIndex];
+  async claim(id: string, claimBountyDto: ClaimBountyDto): Promise<Bounty> {
+    const bounty = await this.findOne(id);
+    
     if (bounty.status !== BountyStatus.OPEN) {
       throw new BadRequestException('Bounty is not available for claiming');
     }
 
-    this.bounties[bountyIndex] = {
-      ...bounty,
-      status: BountyStatus.IN_PROGRESS,
-      claimedBy: claimBountyDto.claimedBy,
-      updatedAt: new Date(),
-    };
-
-    return this.bounties[bountyIndex];
+    bounty.status = BountyStatus.IN_PROGRESS;
+    bounty.claimedBy = claimBountyDto.claimedBy;
+    
+    return this.bountyRepository.save(bounty);
   }
 
-  cancel(id: string): Bounty {
-    const bountyIndex = this.bounties.findIndex(b => b.id === id);
-    if (bountyIndex === -1) {
-      throw new NotFoundException(`Bounty with ID ${id} not found`);
-    }
-
-    const bounty = this.bounties[bountyIndex];
+  async cancel(id: string): Promise<Bounty> {
+    const bounty = await this.findOne(id);
+    
     if (bounty.status === BountyStatus.COMPLETED) {
       throw new BadRequestException('Cannot cancel a completed bounty');
     }
 
-    this.bounties[bountyIndex] = {
-      ...bounty,
-      status: BountyStatus.CANCELLED,
-      updatedAt: new Date(),
-    };
-
-    return this.bounties[bountyIndex];
+    bounty.status = BountyStatus.CANCELLED;
+    return this.bountyRepository.save(bounty);
   }
 
-  complete(id: string): Bounty {
-    const bountyIndex = this.bounties.findIndex(b => b.id === id);
-    if (bountyIndex === -1) {
-      throw new NotFoundException(`Bounty with ID ${id} not found`);
-    }
-
-    const bounty = this.bounties[bountyIndex];
+  async complete(id: string): Promise<Bounty> {
+    const bounty = await this.findOne(id);
+    
     if (bounty.status !== BountyStatus.IN_PROGRESS) {
-      throw new BadRequestException('Can only complete bounties that are in progress');
+      throw new BadRequestException('Bounty must be in progress to complete');
     }
 
-    this.bounties[bountyIndex] = {
-      ...bounty,
-      status: BountyStatus.COMPLETED,
-      updatedAt: new Date(),
-    };
-
-    return this.bounties[bountyIndex];
+    bounty.status = BountyStatus.COMPLETED;
+    return this.bountyRepository.save(bounty);
   }
 }
