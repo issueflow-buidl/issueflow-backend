@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { BountyController } from './bounty.controller';
 import { BountyService } from './bounty.service';
+import { BountyController } from './bounty.controller';
 
 @Module({
   controllers: [BountyController],
