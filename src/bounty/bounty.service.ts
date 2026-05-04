@@ -13,6 +13,7 @@ export class BountyService {
       id: Math.random().toString(36).substr(2, 9),
       ...createBountyDto,
       status: BountyStatus.OPEN,
+      claimedBy: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -42,8 +43,7 @@ export class BountyService {
   claim(id: string, claimBountyDto: ClaimBountyDto): Bounty {
     const bounty = this.findOne(id);
     bounty.status = BountyStatus.IN_PROGRESS;
-    bounty.assignedTo = claimBountyDto.userId;
-    bounty.claimedAt = new Date();
+    bounty.claimedBy = claimBountyDto.claimedBy;
     bounty.updatedAt = new Date();
     return bounty;
   }
@@ -58,7 +58,6 @@ export class BountyService {
   complete(id: string): Bounty {
     const bounty = this.findOne(id);
     bounty.status = BountyStatus.COMPLETED;
-    bounty.completedAt = new Date();
     bounty.updatedAt = new Date();
     return bounty;
   }
