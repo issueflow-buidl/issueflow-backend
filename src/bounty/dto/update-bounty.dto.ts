@@ -14,5 +14,5 @@ export class UpdateBountyDto extends PartialType(CreateBountyDto) {
   @IsOptional()
   @IsNumber()
   @IsPositive()
-  reward?: number;
+  amount?: number;
 }
