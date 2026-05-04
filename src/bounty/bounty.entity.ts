@@ -27,10 +27,11 @@ export class Bounty {
   @Column('decimal', { precision: 10, scale: 2 })
   amount: number;
 
-  @Column()
-  currency: string;
-
-  @Column({ type: 'enum', enum: BountyStatus, default: BountyStatus.OPEN })
+  @Column({
+    type: 'enum',
+    enum: BountyStatus,
+    default: BountyStatus.OPEN,
+  })
   status: BountyStatus;
 
   @Column({ name: 'creator_id' })
@@ -39,12 +40,15 @@ export class Bounty {
   @Column({ name: 'assignee_id', nullable: true })
   assigneeId?: string;
 
-  @Column({ name: 'due_date', nullable: true })
-  dueDate?: Date;
-
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @Column({ name: 'claimed_at', nullable: true })
+  claimedAt?: Date;
+
+  @Column({ name: 'completed_at', nullable: true })
+  completedAt?: Date;
 }
