@@ -11,11 +11,9 @@ export class BountyService {
   create(createBountyDto: CreateBountyDto): Bounty {
     const bounty: Bounty = {
       id: Math.random().toString(36).substr(2, 9),
-      title: createBountyDto.title,
-      description: createBountyDto.description,
-      amount: createBountyDto.amount,
+      ...createBountyDto,
       status: BountyStatus.OPEN,
-      createdBy: createBountyDto.createdBy,
+      claimantId: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -44,8 +42,8 @@ export class BountyService {
 
   claim(id: string, claimBountyDto: ClaimBountyDto): Bounty {
     const bounty = this.findOne(id);
+    bounty.claimantId = claimBountyDto.claimantId;
     bounty.status = BountyStatus.IN_PROGRESS;
-    bounty.claimedBy = claimBountyDto.claimedBy;
     bounty.updatedAt = new Date();
     return bounty;
   }
