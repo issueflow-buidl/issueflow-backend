@@ -13,10 +13,10 @@ export class BountyService {
       id: Math.random().toString(36).substr(2, 9),
       ...createBountyDto,
       status: BountyStatus.OPEN,
-      claimedBy: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+
     this.bounties.push(bounty);
     return bounty;
   }
@@ -49,6 +49,7 @@ export class BountyService {
       ...updateBountyDto,
       updatedAt: new Date(),
     };
+
     return this.bounties[bountyIndex];
   }
 
@@ -67,8 +68,10 @@ export class BountyService {
       ...bounty,
       status: BountyStatus.IN_PROGRESS,
       claimedBy: claimBountyDto.claimedBy,
+      claimedAt: new Date(),
       updatedAt: new Date(),
     };
+
     return this.bounties[bountyIndex];
   }
 
@@ -80,14 +83,16 @@ export class BountyService {
 
     const bounty = this.bounties[bountyIndex];
     if (bounty.status === BountyStatus.COMPLETED || bounty.status === BountyStatus.CANCELLED) {
-      throw new BadRequestException('Cannot cancel completed or already cancelled bounty');
+      throw new BadRequestException('Cannot cancel a completed or already cancelled bounty');
     }
 
     this.bounties[bountyIndex] = {
       ...bounty,
       status: BountyStatus.CANCELLED,
+      cancelledAt: new Date(),
       updatedAt: new Date(),
     };
+
     return this.bounties[bountyIndex];
   }
 
@@ -105,8 +110,10 @@ export class BountyService {
     this.bounties[bountyIndex] = {
       ...bounty,
       status: BountyStatus.COMPLETED,
+      completedAt: new Date(),
       updatedAt: new Date(),
     };
+
     return this.bounties[bountyIndex];
   }
 }
