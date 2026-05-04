@@ -4,7 +4,7 @@ import { BountyService } from './bounty.service';
 describe('BountyService', () => {
   let service: BountyService;
 
-  const mockBountyRepository = {
+  const mockRepository = {
     create: jest.fn(),
     save: jest.fn(),
     find: jest.fn(),
@@ -18,7 +18,7 @@ describe('BountyService', () => {
         BountyService,
         {
           provide: 'BountyRepository',
-          useValue: mockBountyRepository,
+          useValue: mockRepository,
         },
       ],
     }).compile();
