@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBountyDto } from './dto/create-bounty.dto';
 import { UpdateBountyDto } from './dto/update-bounty.dto';
 import { ClaimBountyDto } from './dto/claim-bounty.dto';
@@ -13,10 +13,9 @@ export class BountyService {
       id: Math.random().toString(36).substr(2, 9),
       ...createBountyDto,
       status: BountyStatus.OPEN,
-      assigneeId: null,
+      claimantId: null,
       createdAt: new Date(),
       updatedAt: new Date(),
-      expiresAt: createBountyDto.expiresAt ? new Date(createBountyDto.expiresAt) : null,
     };
     this.bounties.push(bounty);
     return bounty;
@@ -44,9 +43,9 @@ export class BountyService {
   claim(id: string, claimBountyDto: ClaimBountyDto): Bounty {
     const bounty = this.findOne(id);
     if (bounty.status !== BountyStatus.OPEN) {
-      throw new BadRequestException('Bounty is not available for claiming');
+      throw new Error('Bounty is not available for claiming');
     }
-    bounty.assigneeId = claimBountyDto.assigneeId;
+    bounty.claimantId = claimBountyDto.claimantId;
     bounty.status = BountyStatus.IN_PROGRESS;
     bounty.updatedAt = new Date();
     return bounty;
@@ -54,9 +53,6 @@ export class BountyService {
 
   cancel(id: string): Bounty {
     const bounty = this.findOne(id);
-    if (bounty.status === BountyStatus.COMPLETED || bounty.status === BountyStatus.CANCELLED) {
-      throw new BadRequestException('Cannot cancel a completed or already cancelled bounty');
-    }
     bounty.status = BountyStatus.CANCELLED;
     bounty.updatedAt = new Date();
     return bounty;
@@ -64,9 +60,6 @@ export class BountyService {
 
   complete(id: string): Bounty {
     const bounty = this.findOne(id);
-    if (bounty.status !== BountyStatus.IN_PROGRESS) {
-      throw new BadRequestException('Bounty must be in progress to be completed');
-    }
     bounty.status = BountyStatus.COMPLETED;
     bounty.updatedAt = new Date();
     return bounty;
