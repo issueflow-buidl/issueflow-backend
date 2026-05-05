@@ -13,13 +13,9 @@ export class BountyService {
       id: Math.random().toString(36).substr(2, 9),
       ...createBountyDto,
       status: BountyStatus.OPEN,
-      claimedBy: null,
       createdAt: new Date(),
       updatedAt: new Date(),
-      claimedAt: null,
-      completedAt: null,
     };
-    
     this.bounties.push(bounty);
     return bounty;
   }
@@ -29,7 +25,7 @@ export class BountyService {
   }
 
   findOne(id: string): Bounty {
-    const bounty = this.bounties.find(b => b.id === id);
+    const bounty = this.bounties.find((b) => b.id === id);
     if (!bounty) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
@@ -37,7 +33,7 @@ export class BountyService {
   }
 
   update(id: string, updateBountyDto: UpdateBountyDto): Bounty {
-    const bountyIndex = this.bounties.findIndex(b => b.id === id);
+    const bountyIndex = this.bounties.findIndex((b) => b.id === id);
     if (bountyIndex === -1) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
@@ -57,7 +53,7 @@ export class BountyService {
   }
 
   claim(id: string, claimBountyDto: ClaimBountyDto): Bounty {
-    const bountyIndex = this.bounties.findIndex(b => b.id === id);
+    const bountyIndex = this.bounties.findIndex((b) => b.id === id);
     if (bountyIndex === -1) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
@@ -70,8 +66,7 @@ export class BountyService {
     this.bounties[bountyIndex] = {
       ...bounty,
       status: BountyStatus.IN_PROGRESS,
-      claimedBy: claimBountyDto.claimedBy,
-      claimedAt: new Date(),
+      assignedTo: claimBountyDto.claimedBy,
       updatedAt: new Date(),
     };
 
@@ -79,14 +74,14 @@ export class BountyService {
   }
 
   cancel(id: string): Bounty {
-    const bountyIndex = this.bounties.findIndex(b => b.id === id);
+    const bountyIndex = this.bounties.findIndex((b) => b.id === id);
     if (bountyIndex === -1) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
 
     const bounty = this.bounties[bountyIndex];
     if (bounty.status === BountyStatus.COMPLETED || bounty.status === BountyStatus.CANCELLED) {
-      throw new BadRequestException('Cannot cancel a completed or already cancelled bounty');
+      throw new BadRequestException('Cannot cancel completed or already cancelled bounty');
     }
 
     this.bounties[bountyIndex] = {
@@ -99,7 +94,7 @@ export class BountyService {
   }
 
   complete(id: string): Bounty {
-    const bountyIndex = this.bounties.findIndex(b => b.id === id);
+    const bountyIndex = this.bounties.findIndex((b) => b.id === id);
     if (bountyIndex === -1) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
@@ -112,7 +107,6 @@ export class BountyService {
     this.bounties[bountyIndex] = {
       ...bounty,
       status: BountyStatus.COMPLETED,
-      completedAt: new Date(),
       updatedAt: new Date(),
     };
 
