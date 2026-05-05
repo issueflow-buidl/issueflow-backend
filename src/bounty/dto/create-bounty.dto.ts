@@ -15,5 +15,9 @@ export class CreateBountyDto {
 
   @IsString()
   @IsNotEmpty()
+  currency: string;
+
+  @IsString()
+  @IsNotEmpty()
   createdBy: string;
 }
