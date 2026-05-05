@@ -37,8 +37,8 @@ export class Bounty {
   @Column({ name: 'creator_id' })
   creatorId: string;
 
-  @Column({ name: 'assignee_id', nullable: true })
-  assigneeId: string;
+  @Column({ name: 'claimant_id', nullable: true })
+  claimantId: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
