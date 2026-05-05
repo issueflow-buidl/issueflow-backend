@@ -10,10 +10,10 @@ export class BountyService {
 
   create(createBountyDto: CreateBountyDto): Bounty {
     const bounty: Bounty = {
-      id: Math.random().toString(36).substring(7),
+      id: Date.now().toString(),
       ...createBountyDto,
       status: BountyStatus.OPEN,
-      assigneeId: null,
+      claimedBy: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -35,7 +35,8 @@ export class BountyService {
 
   update(id: string, updateBountyDto: UpdateBountyDto): Bounty {
     const bounty = this.findOne(id);
-    Object.assign(bounty, updateBountyDto, { updatedAt: new Date() });
+    Object.assign(bounty, updateBountyDto);
+    bounty.updatedAt = new Date();
     return bounty;
   }
 
@@ -44,8 +45,8 @@ export class BountyService {
     if (bounty.status !== BountyStatus.OPEN) {
       throw new Error('Bounty is not available for claiming');
     }
-    bounty.assigneeId = claimBountyDto.assigneeId;
     bounty.status = BountyStatus.IN_PROGRESS;
+    bounty.claimedBy = claimBountyDto.userId;
     bounty.updatedAt = new Date();
     return bounty;
   }
