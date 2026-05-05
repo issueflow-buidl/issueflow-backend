@@ -10,7 +10,7 @@ export class BountyService {
 
   create(createBountyDto: CreateBountyDto): Bounty {
     const bounty: Bounty = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: Math.random().toString(36).substring(7),
       ...createBountyDto,
       status: BountyStatus.OPEN,
       claimedBy: null,
@@ -35,7 +35,8 @@ export class BountyService {
 
   update(id: string, updateBountyDto: UpdateBountyDto): Bounty {
     const bounty = this.findOne(id);
-    Object.assign(bounty, updateBountyDto, { updatedAt: new Date() });
+    Object.assign(bounty, updateBountyDto);
+    bounty.updatedAt = new Date();
     return bounty;
   }
 
