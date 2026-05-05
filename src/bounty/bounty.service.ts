@@ -11,16 +11,12 @@ export class BountyService {
   create(createBountyDto: CreateBountyDto): Bounty {
     const bounty: Bounty = {
       id: Math.random().toString(36).substr(2, 9),
-      title: createBountyDto.title,
-      description: createBountyDto.description,
-      amount: createBountyDto.amount,
+      ...createBountyDto,
       status: BountyStatus.OPEN,
-      createdBy: createBountyDto.createdBy,
-      claimedBy: null,
+      assigneeId: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-
     this.bounties.push(bounty);
     return bounty;
   }
@@ -50,7 +46,7 @@ export class BountyService {
       throw new Error('Bounty is not available for claiming');
     }
     bounty.status = BountyStatus.IN_PROGRESS;
-    bounty.claimedBy = claimBountyDto.claimedBy;
+    bounty.assigneeId = claimBountyDto.assigneeId;
     bounty.updatedAt = new Date();
     return bounty;
   }
@@ -65,7 +61,7 @@ export class BountyService {
   complete(id: string): Bounty {
     const bounty = this.findOne(id);
     if (bounty.status !== BountyStatus.IN_PROGRESS) {
-      throw new Error('Bounty must be in progress to complete');
+      throw new Error('Bounty is not in progress');
     }
     bounty.status = BountyStatus.COMPLETED;
     bounty.updatedAt = new Date();
