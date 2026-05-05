@@ -27,6 +27,9 @@ export class Bounty {
   @Column('decimal', { precision: 10, scale: 2 })
   amount: number;
 
+  @Column()
+  currency: string;
+
   @Column({
     type: 'enum',
     enum: BountyStatus,
@@ -34,11 +37,17 @@ export class Bounty {
   })
   status: BountyStatus;
 
-  @Column({ nullable: true })
+  @Column()
   createdBy: string;
 
   @Column({ nullable: true })
-  claimedBy: string;
+  claimedBy?: string;
+
+  @Column({ nullable: true })
+  claimedAt?: Date;
+
+  @Column({ nullable: true })
+  completedAt?: Date;
 
   @CreateDateColumn()
   createdAt: Date;
