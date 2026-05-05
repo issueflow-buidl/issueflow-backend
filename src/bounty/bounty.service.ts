@@ -9,13 +9,15 @@ export class BountyService {
   private bounties: Bounty[] = [];
 
   create(createBountyDto: CreateBountyDto): Bounty {
-    const bounty: Bounty = {
-      id: Math.random().toString(36).substr(2, 9),
+    const bounty = {
+      id: Math.random().toString(36).substring(2, 15),
       ...createBountyDto,
       status: BountyStatus.OPEN,
+      claimedBy: null,
       createdAt: new Date(),
       updatedAt: new Date(),
-    };
+    } as Bounty;
+
     this.bounties.push(bounty);
     return bounty;
   }
