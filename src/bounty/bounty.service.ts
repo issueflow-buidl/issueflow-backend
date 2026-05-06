@@ -8,24 +8,27 @@ import { Bounty, BountyStatus } from './bounty.entity';
 export class BountyService {
   private bounties: Bounty[] = [];
 
-  create(createBountyDto: CreateBountyDto): Bounty {
+  async create(createBountyDto: CreateBountyDto): Promise<Bounty> {
     const bounty: Bounty = {
       id: Math.random().toString(36).substr(2, 9),
-      ...createBountyDto,
+      title: createBountyDto.title,
+      description: createBountyDto.description,
+      reward: createBountyDto.reward,
       status: BountyStatus.OPEN,
-      claimedBy: null,
+      creatorId: createBountyDto.creatorId,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+
     this.bounties.push(bounty);
     return bounty;
   }
 
-  findAll(): Bounty[] {
+  async findAll(): Promise<Bounty[]> {
     return this.bounties;
   }
 
-  findOne(id: string): Bounty {
+  async findOne(id: string): Promise<Bounty> {
     const bounty = this.bounties.find((b) => b.id === id);
     if (!bounty) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
@@ -33,30 +36,31 @@ export class BountyService {
     return bounty;
   }
 
-  update(id: string, updateBountyDto: UpdateBountyDto): Bounty {
-    const bounty = this.findOne(id);
+  async update(id: string, updateBountyDto: UpdateBountyDto): Promise<Bounty> {
+    const bounty = await this.findOne(id);
     Object.assign(bounty, updateBountyDto);
     bounty.updatedAt = new Date();
     return bounty;
   }
 
-  claim(id: string, claimBountyDto: ClaimBountyDto): Bounty {
-    const bounty = this.findOne(id);
+  async claim(id: string, claimBountyDto: ClaimBountyDto): Promise<Bounty> {
+    const bounty = await this.findOne(id);
     bounty.status = BountyStatus.IN_PROGRESS;
-    bounty.claimedBy = claimBountyDto.claimedBy;
+    bounty.claimantId = claimBountyDto.claimantId;
+    bounty.claimedAt = new Date();
     bounty.updatedAt = new Date();
     return bounty;
   }
 
-  cancel(id: string): Bounty {
-    const bounty = this.findOne(id);
+  async cancel(id: string): Promise<Bounty> {
+    const bounty = await this.findOne(id);
     bounty.status = BountyStatus.CANCELLED;
     bounty.updatedAt = new Date();
     return bounty;
   }
 
-  complete(id: string): Bounty {
-    const bounty = this.findOne(id);
+  async complete(id: string): Promise<Bounty> {
+    const bounty = await this.findOne(id);
     bounty.status = BountyStatus.COMPLETED;
     bounty.updatedAt = new Date();
     return bounty;
