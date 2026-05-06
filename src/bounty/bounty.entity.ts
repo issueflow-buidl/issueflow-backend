@@ -38,14 +38,26 @@ export class Bounty {
   creatorId: string;
 
   @Column({ nullable: true })
-  claimedBy: string;
+  assigneeId: string;
 
   @Column({ nullable: true })
-  claimedAt: Date;
+  claimantId: string;
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column({ nullable: true })
+  dueDate: Date;
+
+  @Column('simple-array', { nullable: true })
+  tags: string[];
+
+  @Column({ default: 0 })
+  viewCount: number;
+
+  @Column({ default: false })
+  isFeatured: boolean;
 }
