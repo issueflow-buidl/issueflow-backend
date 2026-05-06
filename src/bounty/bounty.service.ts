@@ -42,6 +42,9 @@ export class BountyService {
 
   claim(id: string, claimBountyDto: ClaimBountyDto): Bounty {
     const bounty = this.findOne(id);
+    if (bounty.status !== BountyStatus.OPEN) {
+      throw new Error('Bounty is not available for claiming');
+    }
     bounty.status = BountyStatus.IN_PROGRESS;
     bounty.claimedBy = claimBountyDto.claimedBy;
     bounty.updatedAt = new Date();
@@ -57,6 +60,9 @@ export class BountyService {
 
   complete(id: string): Bounty {
     const bounty = this.findOne(id);
+    if (bounty.status !== BountyStatus.IN_PROGRESS) {
+      throw new Error('Bounty must be in progress to complete');
+    }
     bounty.status = BountyStatus.COMPLETED;
     bounty.updatedAt = new Date();
     return bounty;
