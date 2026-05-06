@@ -38,7 +38,7 @@ export class Bounty {
   createdBy: string;
 
   @Column({ name: 'claimed_by', nullable: true })
-  claimedBy: string;
+  claimedBy: string | null;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -47,8 +47,11 @@ export class Bounty {
   updatedAt: Date;
 
   @Column({ name: 'claimed_at', nullable: true })
-  claimedAt: Date;
+  claimedAt: Date | null;
 
   @Column({ name: 'completed_at', nullable: true })
-  completedAt: Date;
+  completedAt: Date | null;
+
+  @Column({ name: 'cancelled_at', nullable: true })
+  cancelledAt: Date | null;
 }
