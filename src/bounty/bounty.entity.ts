@@ -34,14 +34,14 @@ export class Bounty {
   })
   status: BountyStatus;
 
-  @Column()
+  @Column({ nullable: true })
   createdBy: string;
 
   @Column({ nullable: true })
-  claimedBy?: string;
+  claimedBy: string;
 
   @Column({ nullable: true })
-  claimedAt?: Date;
+  claimedAt: Date;
 
   @CreateDateColumn()
   createdAt: Date;
