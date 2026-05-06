@@ -11,7 +11,7 @@ export class CreateBountyDto {
 
   @IsNumber()
   @IsPositive()
-  reward: number;
+  amount: number;
 
   @IsString()
   @IsNotEmpty()
