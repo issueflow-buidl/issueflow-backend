@@ -1,10 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BountyService } from './bounty.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Bounty, BountyStatus } from './bounty.entity';
+import { Repository } from 'typeorm';
+import { NotFoundException } from '@nestjs/common';
 
 describe('BountyService', () => {
   let service: BountyService;
+  let repository: Repository<Bounty>;
 
-  const mockBountyRepository = {
+  const mockRepository = {
     create: jest.fn(),
     save: jest.fn(),
     find: jest.fn(),
@@ -17,16 +22,34 @@ describe('BountyService', () => {
       providers: [
         BountyService,
         {
-          provide: 'BountyRepository',
-          useValue: mockBountyRepository,
+          provide: getRepositoryToken(Bounty),
+          useValue: mockRepository,
         },
       ],
     }).compile();
 
     service = module.get<BountyService>(BountyService);
+    repository = module.get<Repository<Bounty>>(getRepositoryToken(Bounty));
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('findAll', () => {
+    it('should return an array of bounties', async () => {
+      const result = [];
+      mockRepository.find.mockResolvedValue(result);
+
+      expect(await service.findAll()).toBe(result);
+    });
+  });
+
+  describe('findOne', () => {
+    it('should throw NotFoundException when bounty not found', async () => {
+      mockRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.findOne('1')).rejects.toThrow(NotFoundException);
+    });
   });
 });
