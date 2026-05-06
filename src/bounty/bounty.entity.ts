@@ -35,7 +35,7 @@ export class Bounty {
   status: BountyStatus;
 
   @Column({ nullable: true })
-  creatorId: string;
+  createdBy: string;
 
   @Column({ nullable: true })
   claimedBy: string;
@@ -45,10 +45,4 @@ export class Bounty {
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @Column({ nullable: true })
-  claimedAt: Date;
-
-  @Column({ nullable: true })
-  completedAt: Date;
 }
