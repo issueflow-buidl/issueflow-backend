@@ -4,23 +4,11 @@ import { BountyService } from './bounty.service';
 describe('BountyService', () => {
   let service: BountyService;
 
-  const mockRepository = {
-    create: jest.fn(),
-    save: jest.fn(),
-    find: jest.fn(),
-    findOne: jest.fn(),
-    update: jest.fn(),
-  };
+  const mockBounties = [];
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        BountyService,
-        {
-          provide: 'BountyRepository',
-          useValue: mockRepository,
-        },
-      ],
+      providers: [BountyService],
     }).compile();
 
     service = module.get<BountyService>(BountyService);
@@ -28,5 +16,12 @@ describe('BountyService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('findAll', () => {
+    it('should return an array of bounties', async () => {
+      const result = await service.findAll();
+      expect(Array.isArray(result)).toBe(true);
+    });
   });
 });
