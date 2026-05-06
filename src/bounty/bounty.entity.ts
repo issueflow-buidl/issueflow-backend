@@ -34,30 +34,18 @@ export class Bounty {
   })
   status: BountyStatus;
 
-  @Column({ nullable: true })
+  @Column({ name: 'creator_id' })
   creatorId: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'assignee_id', nullable: true })
   assigneeId: string;
 
-  @Column({ nullable: true })
-  claimantId: string;
-
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  @Column({ nullable: true })
-  dueDate: Date;
-
-  @Column('simple-array', { nullable: true })
-  tags: string[];
-
-  @Column({ default: 0 })
-  viewCount: number;
-
-  @Column({ default: false })
-  isFeatured: boolean;
+  @Column({ name: 'expires_at', nullable: true })
+  expiresAt: Date;
 }
