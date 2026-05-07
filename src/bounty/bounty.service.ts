@@ -37,6 +37,7 @@ export class BountyService {
     if (bountyIndex === -1) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
+
     this.bounties[bountyIndex] = {
       ...this.bounties[bountyIndex],
       ...updateBountyDto,
@@ -50,10 +51,11 @@ export class BountyService {
     if (bountyIndex === -1) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
+
     this.bounties[bountyIndex] = {
       ...this.bounties[bountyIndex],
       status: BountyStatus.IN_PROGRESS,
-      claimantId: claimBountyDto.claimantId,
+      claimedBy: claimBountyDto.claimedBy,
       claimedAt: new Date(),
       updatedAt: new Date(),
     };
@@ -65,6 +67,7 @@ export class BountyService {
     if (bountyIndex === -1) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
+
     this.bounties[bountyIndex] = {
       ...this.bounties[bountyIndex],
       status: BountyStatus.CANCELLED,
@@ -78,9 +81,11 @@ export class BountyService {
     if (bountyIndex === -1) {
       throw new NotFoundException(`Bounty with ID ${id} not found`);
     }
+
     this.bounties[bountyIndex] = {
       ...this.bounties[bountyIndex],
       status: BountyStatus.COMPLETED,
+      completedAt: new Date(),
       updatedAt: new Date(),
     };
     return this.bounties[bountyIndex];
