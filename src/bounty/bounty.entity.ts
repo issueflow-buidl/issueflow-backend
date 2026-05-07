@@ -45,10 +45,4 @@ export class Bounty {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
-
-  @Column({ name: 'claimed_at', nullable: true })
-  claimedAt?: Date;
-
-  @Column({ name: 'completed_at', nullable: true })
-  completedAt?: Date;
 }
